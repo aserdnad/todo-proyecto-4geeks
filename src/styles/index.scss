@@ -1,13 +1,41 @@
 @import "~bootstrap/scss/bootstrap.scss";
 
-/* 
+*{
+    font-family: 'Raleway', sans-serif;
+    font-size: 20px;
+}
 
-    You can write your own styles here...
-    
-    
-    ...Or you can use the import command to include 
-    other sylesheets into your bunde as well, e.j:
-    
-    import 'relative/path/to/stylesheet.scss';
+body{
+    background-color: rgba($color: #cfcfcfd7, $alpha: 0.4);
+}
 
-*/
+.escondido>span{
+    visibility: hidden;
+}
+
+.escondido:hover{
+    cursor: pointer;
+    span{
+        visibility: visible;
+    }
+}
+
+h1{
+    text-align: center;
+    font-size: 5em;
+    color: rgba($color: #f5afae, $alpha: 0.5)
+}
+
+.container{
+    width: 35%;
+}
+
+.final{
+    color:#9b9999d7;
+    font-size: 10px;
+}
+
+
+// .escondido:hover>span{
+//     visibility: visible;
+// }
