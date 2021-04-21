@@ -1,27 +1,84 @@
 import React from "react";
 import { Jumbotron, Form, ListGroup } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 //create your first component
 export function Home() {
 	const [tareas, setTareas] = useState([]);
 	const [agregar, setAgregar] = useState("");
+	const URI = "https://assets.breatheco.de/apis/fake/todos/";
 
 	const handleSubmit = e => {
 		e.preventDefault();
-		let copia = tareas;
 		if (agregar !== "") {
-			setTareas([...copia, agregar]);
-			setAgregar("");
+			manejarFetchPut();
 		}
 	};
 
 	const eliminar = index => {
-		// let copia = [...tareas];
-		// copia.splice(index, 1);
-		// setTareas(copia);
-		setTareas(tareas.filter((tarea, i) => i !== index));
+		manejarFetchDelete(index);
 	};
+
+	const manejarFetchGet = async () => {
+		try {
+			const response = await fetch(URI + "/user/aserdnad");
+			const data = await response.json();
+			console.log(data);
+			setTareas(data);
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const manejarFetchPut = async () => {
+		try {
+			const response = await fetch(URI + "/user/aserdnad", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify([
+					...tareas,
+					{ label: agregar, done: false }
+				])
+			});
+			if (response.ok) {
+				await manejarFetchGet();
+				setAgregar("");
+			} else {
+				console.log(response.status);
+				console.log(response.statusText);
+				const data = await response.json();
+				console.log(data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const manejarFetchDelete = async id => {
+		try {
+			const copia = tareas;
+			copia.splice(id, 1);
+			const response = await fetch(URI + "/user/aserdnad", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify([...copia])
+			});
+			if (response.ok) {
+				manejarFetchGet();
+			} else {
+				console.log(response.status);
+				console.log(response.statusText);
+				const data = await response.json();
+				console.log(data);
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	useEffect(() => {
+		manejarFetchGet();
+	}, []);
 
 	return (
 		<div className="contenido">
@@ -48,7 +105,7 @@ export function Home() {
 								<ListGroup.Item
 									key={index}
 									className="escondido d-flex justify-content-between">
-									{tarea}{" "}
+									{tarea["label"]}{" "}
 									<span onClick={e => eliminar(index)}>
 										❌
 									</span>
