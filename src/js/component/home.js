@@ -1,5 +1,5 @@
 import React from "react";
-import { Jumbotron, Form, ListGroup } from "react-bootstrap";
+import { Jumbotron, Form, ListGroup, Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
 
 //create your first component
@@ -7,6 +7,22 @@ export function Home() {
 	const [tareas, setTareas] = useState([]);
 	const [agregar, setAgregar] = useState("");
 	const URI = "https://assets.breatheco.de/apis/fake/todos/";
+
+	const crearUsuario = async () => {
+		try {
+			const response = await fetch(URI + "/user/aserdnad", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify([])
+			});
+			const data = await response.json();
+			if (response.ok) {
+				manejarFetchGet();
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const handleSubmit = e => {
 		e.preventDefault();
@@ -23,8 +39,12 @@ export function Home() {
 		try {
 			const response = await fetch(URI + "/user/aserdnad");
 			const data = await response.json();
-			console.log(data);
-			setTareas(data);
+			if (response.status === 200) {
+				setTareas(data);
+			}
+			if (response.status === 404) {
+				crearUsuario();
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -47,7 +67,6 @@ export function Home() {
 				console.log(response.status);
 				console.log(response.statusText);
 				const data = await response.json();
-				console.log(data);
 			}
 		} catch (error) {
 			console.log(error);
@@ -66,11 +85,20 @@ export function Home() {
 			if (response.ok) {
 				manejarFetchGet();
 			} else {
-				console.log(response.status);
-				console.log(response.statusText);
 				const data = await response.json();
-				console.log(data);
 			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
+
+	const eliminarTodo = async () => {
+		try {
+			const response = await fetch(URI + "/user/aserdnad", {
+				method: "DELETE"
+			});
+			const data = await response.json();
+			manejarFetchGet();
 		} catch (error) {
 			console.log(error);
 		}
@@ -119,6 +147,14 @@ export function Home() {
 						</ListGroup.Item>
 					)}
 				</ListGroup>
+				<div className="d-flex justify-content-center">
+					<Button
+						variant="danger"
+						className="mt-4"
+						onClick={eliminarTodo}>
+						Eliminar todas las tareas
+					</Button>
+				</div>
 			</Jumbotron>
 		</div>
 	);
